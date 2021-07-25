@@ -1,19 +1,24 @@
-## Welcome to GitHub Pages
+# Mispronunciation Detection and Correction via Discrete Acoustic Units
 
-You can use the [editor on GitHub](https://github.com/zju-zhan-zhang/mispronunciation-d-c/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
+## Audio Samples
 ### Header 3
+
+
+
+Decoded
+https://user-images.githubusercontent.com/87177864/126886624-ee78a240-c54b-480f-9f0f-1021bfab7275.mp4
+Raw
+https://user-images.githubusercontent.com/87177864/126886682-4a464cce-7f1b-4139-b4e2-8a2134871cf9.mp4
+Corrected
+https://user-images.githubusercontent.com/87177864/126886728-2f463272-bfc5-4191-a2a1-2c3d34901e07.mp4
+TTS w/o Style
+https://user-images.githubusercontent.com/87177864/126886736-3bd91b7b-4c42-4c56-8973-b6c5720d956d.mp4
+TTS w/ Style
+https://user-images.githubusercontent.com/87177864/126886738-7b8f5c8c-7c4c-4d40-b408-735fe55995e0.mp4
+
+
+
+
 
 - Bulleted
 - List
