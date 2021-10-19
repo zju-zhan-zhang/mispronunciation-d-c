@@ -2,39 +2,68 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <title>Mispronunciation Detection and Correction via Discrete Acoustic Units</title>
+    <title>MASKED ACOUSTIC UNIT FOR MISPRONUNCIATION DETECTION AND CORRECTION</title>
 </head>
 <body>
     <header>
-        <h1>Mispronunciation Detection and Correction via Discrete Acoustic Units</h1>
+        <h1>MASKED ACOUSTIC UNIT FOR MISPRONUNCIATION DETECTION AND CORRECTION</h1>
         <hr>
     </header>
     <main>
+    <h2>Abstract</h2>
+    
+    Computer-Assisted Pronunciation Training (CAPT) plays an important role in language learning. Conventional ASRbased CAPT methods require expensive annotation of the ground truth pronunciation for the supervised training. Meanwhile, certain undefined non-native phonemes cannot be correctly classified into standard phonemes, making the annotation process challenging and subjective. On the other hand, ASR-based CAPT methods only give the learner textbased feedback about the mispronunciation, but cannot teach the learner how to pronounce the sentence correctly. To solve these limitations, we propose to use the acoustic unit (AU) as the intermediary feature for both mispronunciation detection and correction. The proposed method uses the masked AU sequence and the target phonemes to detect the error AU and then corrects it. This method can give the learner speechbased self-imitating feedback, making our CAPT powerful for education.
+    <hr>
+     <h2>Introduction</h2>
+     First, let's view the ASR-based CAPT model.
+     
         <div align="center">
-            <img width="500"
-              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/images/vqvae.png"><br>
-            <sup><strong>Fig 1:</strong> Structure of the proposed VQ-VAE. The spectrum is encoded into codes by the VQ encoder. Then, the spectrum is reconstructed using the encoded codes and the speaker information (X-vector).</sup>
+            <img width="300"
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//images/asr-based.png"><br>
+            <sup><strong>Fig 1:</strong> Structure of the ASR-based model.</sup>
         </div>
+	This kind of models recognize the input spectrum and align the text with the target one to find the mispronunciation. However, it assumes that the spectrum can be classified into these defined standard phonemes. Meanwhile, it can only offer a text-based feedback about where the misprounciation is but cannot teach the learner the correction pronunciation.
+		<div></div>
+	How can we make the CAPT system to speak just like a teacher? Naturally, we can think of text-to-speech (TTS) technologies. By generating the standard pronunciation, we can learn how the text is correctly pronounced. We can also compare the generated spectrum and the input one to detect the error.
 	<div align="center">
-            <img width="800"
-              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/images/correction_model.png"><br>
-            <sup><strong>Fig 2:</strong> Workflow of the proposed method. Spectrums are encoded into codes for further processing. The ground truth L1 codes are corrupted by the distracting codes. The code corrector is trained to predict the original L1 codes and the error mask based on the corrupted codes and the phonemes. For inference, the corrected codes are converted back to spectrums using the code decoder.</sup>
+            <img width="300"
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//images/comparison-based.png"><br>
+            <sup><strong>Fig 2:</strong> Structure of the Comparison-based model.</sup>
         </div>
-        <h2>Corrected samples</h2>
+	However, spectrum-based comparison may not be robust due to style or speaker variation. Can we use a more robust feature for both detection and speech-based feedback for correction?
+	<div></div>
+	In this paper, we use the acoustic unit (AU) as the intermediary feature for both misprounciation detection and correction.
+		<div align="center">
+            <img width="300"
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//images/proposed.png"><br>
+            <sup><strong>Fig 3:</strong> Structure of the proposed model.</sup>
+        </div>
+    <hr>
+
+        <h2>Audio samples</h2>
+	We give several samples to show the performance. Note that we force the duration of each phoneme to be the same as the original one for Fastspeech2 so that the error can be calculated. However, the force alignment obtained from the teacher (trained on L1 dataset) may be wrong for L2-Arctic. Thus, certain sample may produce unnatural pronunciation.
+	<div></div>
+       In general, without the style, the generated speech is more natural. However, it also becomes dull. In our survey, more volunteers prefer the CAPT system that can offer the stylized feedback because the education process is more personalized. 
+
+
+
+
         <h3>NCC_arctic_a0099</h3>
 		<div align="center">
             <img width="554" height="720" alt=""
-              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/NCC_arctic_a0099.png"><br>
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/NCC_arctic_a0099.png"><br>
 	      <sup><strong>NCC_arctic_a0099: </strong> A maddening joy pounded in his brain.</sup>
         </div>
 	<table><thead>
 	<tr>
 		<th style="text-align: center">Raw</th>
-		<th style="text-align: center">Raw Codes Decoded</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/NCC_arctic_a0099_GT.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/NCC_arctic_a0099_Decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/NCC_arctic_a0099_GT.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/NCC_arctic_a0099_Decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/NCC_arctic_a0099_G.wav?raw=true" controls preload></audio></td>
 	</tr>
 
 	<tr>
@@ -43,26 +72,34 @@
 		<th style="text-align: center">TTS w/o Style</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/NCC_arctic_a0099_P.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/NCC_arctic_a0099_TTS.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/NCC_arctic_a0099_TTS w_o Style.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/NCC_arctic_a0099_P.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/NCC_arctic_a0099_TTS.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/NCC_arctic_a0099_TTS w_o Style.wav?raw=true" controls preload></audio></td>
 	</tr>
-	</tbody></table>	
+	</tbody></table>
 
-        <h3>HKK_arctic_b0225</h3>
+
+
+
+
+
+
+	 <h3>YBAA_arctic_a0008</h3>
 	<div align="center">
             <img width="554" height="720" alt=""
-              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/HKK_arctic_b0225.png"><br>
-            <sup><strong>HKK_arctic_b0225: </strong> The President of the United States was his friend.</sup>
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0008.png"><br>
+            <sup><strong>YBAA_arctic_a0008: </strong> Gad your letter came just in time.</sup>
         </div>
 	<table><thead>
 	<tr>
 		<th style="text-align: center">Raw</th>
-		<th style="text-align: center">Raw Codes Decoded</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/HKK_arctic_b0225_GT.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/HKK_arctic_b0225_Decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0008_gt.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0008_decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0008_G.wav?raw=true" controls preload></audio></td>
 	</tr>
 
 	<tr>
@@ -71,54 +108,33 @@
 		<th style="text-align: center">TTS w/o Style</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/HKK_arctic_b0225_P.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/HKK_arctic_b0225_TTS.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/HKK_arctic_b0225_TTS w_o Style.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0008_p.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0008_tts.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0008_tts w_o Style.wav?raw=true" controls preload></audio></td>
 	</tr>
 	</tbody></table>
 
-        <h3>LXC_arctic_a0089</h3>
-	<div align="center">
-            <img width="554" height="720" alt=""
-              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/LXC_arctic_a0089.png"><br>
-            <sup><strong>LXC_arctic_a0089: </strong> The night glow was treacherous to shoot by.</sup>
-        </div>
-	<table><thead>
-	<tr>
-		<th style="text-align: center">Raw</th>
-		<th style="text-align: center">Raw Codes Decoded</th>
-	</tr></thead><tbody>
-	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/LXC_arctic_a0089_GT.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/LXC_arctic_a0089_Decoded.wav?raw=true" controls preload></audio></td>
-	</tr>
 
-	<tr>
-		<th style="text-align: center">Corrected</th>
-		<th style="text-align: center">TTS w/ Style</th>
-		<th style="text-align: center">TTS w/o Style</th>
-	</tr></thead><tbody>
-	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/LXC_arctic_a0089_P.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/LXC_arctic_a0089_TTS.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/LXC_arctic_a0089_TTS w_o Style.wav?raw=true" controls preload></audio></td>
-	</tr>
-	</tbody></table>
+
+
+
 
         <h3>BWC_arctic_a0089</h3>
 	<div align="center">
             <img width="554" height="720" alt=""
-              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/BWC_arctic_a0089.png"><br>
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/BWC_arctic_a0089.png"><br>
             <sup><strong>BWC_arctic_a0089: </strong> The night glow was treacherous to shoot by.</sup>
         </div>
 	<table><thead>
 	<tr>
 		<th style="text-align: center">Raw</th>
-		<th style="text-align: center">Raw Codes Decoded</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/BWC_arctic_a0089_GT.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/BWC_arctic_a0089_Decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/BWC_arctic_a0089_GT.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/BWC_arctic_a0089_Decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/BWC_arctic_a0089_G.wav?raw=true" controls preload></audio></td>
 	</tr>
 
 	<tr>
@@ -127,26 +143,95 @@
 		<th style="text-align: center">TTS w/o Style</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/BWC_arctic_a0089_P.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/BWC_arctic_a0089_TTS.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/BWC_arctic_a0089_TTS w_o Style.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/BWC_arctic_a0089_P.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/BWC_arctic_a0089_TTS.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/BWC_arctic_a0089_TTS w_o Style.wav?raw=true" controls preload></audio></td>
 	</tr>
 	</tbody></table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+	 <h3>YKWK_arctic_a0095</h3>
+	<div align="center">
+            <img width="554" height="720" alt=""
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YKWK_arctic_a0095.png"><br>
+            <sup><strong>YKWK_arctic_a0095: </strong>A big canvas tent was the first thing to come within his vision.</sup>
+        </div>
+	<table><thead>
+	<tr>
+		<th style="text-align: center">Raw</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YKWK_arctic_a0095_gt.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YKWK_arctic_a0095_decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YKWK_arctic_a0095_G.wav?raw=true" controls preload></audio></td>
+	</tr>
+
+	<tr>
+		<th style="text-align: center">Corrected</th>
+		<th style="text-align: center">TTS w/ Style</th>
+		<th style="text-align: center">TTS w/o Style</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YKWK_arctic_a0095_p.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YKWK_arctic_a0095_tts.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YKWK_arctic_a0095_tts w_o Style.wav?raw=true" controls preload></audio></td>
+	</tr>
+	</tbody></table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <h3>THV_arctic_a0130</h3>
 	<div align="center">
             <img width="554" height="720" alt=""
-              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/THV_arctic_a0130.png"><br>
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/THV_arctic_a0130.png"><br>
             <sup><strong>THV_arctic_a0130: </strong> She was his now forever.</sup>
         </div>
 	<table><thead>
 	<tr>
 		<th style="text-align: center">Raw</th>
-		<th style="text-align: center">Raw Codes Decoded</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/THV_arctic_a0130_GT.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/THV_arctic_a0130_Decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/THV_arctic_a0130_GT.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/THV_arctic_a0130_Decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/THV_arctic_a0130_G.wav?raw=true" controls preload></audio></td>
 	</tr>
 
 	<tr>
@@ -155,11 +240,160 @@
 		<th style="text-align: center">TTS w/o Style</th>
 	</tr></thead><tbody>
 	<tr>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/THV_arctic_a0130_P.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/THV_arctic_a0130_TTS.wav?raw=true" controls preload></audio></td>
-                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages/converted/THV_arctic_a0130_TTS w_o Style.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/THV_arctic_a0130_P.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/THV_arctic_a0130_TTS.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/THV_arctic_a0130_TTS w_o Style.wav?raw=true" controls preload></audio></td>
 	</tr>
 	</tbody></table>
+
+
+
+<div></div>
+        <h2>About annotation</h2>
+	We should also note that the annotation of the misprounciation is difficult and subjective. Certain annotations differs from the judgement of the volunteers.
+
+
+	
+	<h3>HKK_arctic_a0006</h3>
+	In this sample, the final "forever" seems abnormal as the speaker is laughing. However, it can be subjective to mark it as a mispronunciation or not.
+	<div align="center">
+            <img width="554" height="720" alt=""
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0006.png"><br>
+            <sup><strong>HKK_arctic_a0006: </strong> God bless 'em I hope I'll go on seeing them forever.</sup>
+        </div>
+	<table><thead>
+	<tr>
+		<th style="text-align: center">Raw</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0006_gt.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0006_decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0006_G.wav?raw=true" controls preload></audio></td>
+	</tr>
+
+	<tr>
+		<th style="text-align: center">Corrected</th>
+		<th style="text-align: center">TTS w/ Style</th>
+		<th style="text-align: center">TTS w/o Style</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0006_p.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0006_tts.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0006_tts w_o Style.wav?raw=true" controls preload></audio></td>
+	</tr>
+	</tbody></table>
+
+
+
+	 <h3>YBAA_arctic_a0003</h3>
+	 The stress of "twentieth" is incorrect, but not labelled as a mispronunciation.
+	<div align="center">
+            <img width="554" height="720" alt=""
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0003.png"><br>
+            <sup><strong>YBAA_arctic_a0003: </strong> For the twentieth time that evening the two men shook hands.</sup>
+        </div>
+	<table><thead>
+	<tr>
+		<th style="text-align: center">Raw</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0003_gt.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0003_decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0003_G.wav?raw=true" controls preload></audio></td>
+	</tr>
+
+	<tr>
+		<th style="text-align: center">Corrected</th>
+		<th style="text-align: center">TTS w/ Style</th>
+		<th style="text-align: center">TTS w/o Style</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0003_p.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0003_tts.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/YBAA_arctic_a0003_tts w_o Style.wav?raw=true" controls preload></audio></td>
+	</tr>
+	</tbody></table>
+
+
+
+        <h3>HKK_arctic_b0225</h3>
+	 "President" here sounds more like "Presidernt", but is not labelled as a mispronunciation in the annotation.
+	<div align="center">
+            <img width="554" height="720" alt=""
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_b0225.png"><br>
+            <sup><strong>HKK_arctic_b0225: </strong> The President of the United States was his friend.  </sup>
+        </div>
+	<table><thead>
+	<tr>
+		<th style="text-align: center">Raw</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_b0225_GT.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_b0225_decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_b0225_G.wav?raw=true" controls preload></audio></td>
+	</tr>
+
+	<tr>
+		<th style="text-align: center">Corrected</th>
+		<th style="text-align: center">TTS w/ Style</th>
+		<th style="text-align: center">TTS w/o Style</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_b0225_P.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_b0225_TTS.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_b0225_TTS w_o Style.wav?raw=true" controls preload></audio></td>
+	</tr>
+	</tbody></table>
+
+
+
+	 <h3>HKK_arctic_a0008</h3>
+	 "Came" is not labelled as a mispronunciation in the annotation.
+
+	<div align="center">
+            <img width="554" height="720" alt=""
+              src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0008.png"><br>
+            <sup><strong>HKK_arctic_a0008: </strong> Gad your letter came just in time.</sup>
+        </div>
+	<table><thead>
+	<tr>
+		<th style="text-align: center">Raw</th>
+		<th style="text-align: center">Raw AU Decoded</th>
+		<th style="text-align: center">Google TTS</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0008_gt.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0008_decoded.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0008_G.wav?raw=true" controls preload></audio></td>
+	</tr>
+
+	<tr>
+		<th style="text-align: center">Corrected</th>
+		<th style="text-align: center">TTS w/ Style</th>
+		<th style="text-align: center">TTS w/o Style</th>
+	</tr></thead><tbody>
+	<tr>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0008_p.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0008_tts.wav?raw=true" controls preload></audio></td>
+                    <td><audio src="https://github.com/zju-zhan-zhang/mispronunciation-d-c/raw/gh-pages//converted/HKK_arctic_a0008_tts w_o Style.wav?raw=true" controls preload></audio></td>
+	</tr>
+	</tbody></table>
+
+
+
+
+
+
+
+
+
+
 
     </main>
 </body>
